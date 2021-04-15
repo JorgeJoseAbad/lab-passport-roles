@@ -12,7 +12,10 @@ const checkTA = checkRoles('TA');
 const User = require("../models/user");
 
 siteController.get("/", (req, res, next) => {
-  res.render("index");
+  res.render("index",{
+    fakeRoute: "/",
+    user : "undefined"
+  });
 });
 
 siteController.get("/login",(req,res,next)=>{
@@ -21,12 +24,13 @@ siteController.get("/login",(req,res,next)=>{
 
 siteController.post("/login",
     passport.authenticate('local', {
-        successRedirect: '/',
+        successRedirect: '/check',
         failureRedirect: '/login'
     }));
 
 siteController.get("/", ensureAuthenticated, (req, res, next) => {
     User.find({}, (err, docs) => {
+      debugger;
         if (err) return next(err);
         let renderObj = {isBoss: false, userId: req.user.id, users: docs};
         if (req.user.role === 'Boss') {
@@ -51,9 +55,46 @@ function ensureAuthenticated(req, res, next) {
 
 siteController.get('/check', checkRoles('Boss'), (req, res) => {
   console.log("in /check");
-  res.render('index', {user: req.user});
+  res.render('index', {
+    fakeRoute: "/check",
+    user: req.user
+  });
 });
 
+siteController.get('/newEmployee', checkRoles('Boss'),(req, res) => {
+  console.log("in /newEmployee");
+  res.render('./employees/new',{
+    fakeRoute: "/newEmployee",
+    user: req.user
+  })
+})
+
+siteController.post('/newEmployee', checkRoles('Boss'),(req, res) => {
+  console.log("in /newEmployee post");
+  debugger;
+  const newUser = {
+    username: req.body.username,
+    name:  req.body.name,
+    email: req.body.email,
+    familyName: req.body.familyName,
+    password: req.body.password, //ojo, eso no puede ser asi
+    role: req.body.role
+  }
+  res.render('./employees/new',{
+    fakeRoute: "/newEmployee",
+    user: req.user
+  })
+})
+
+siteController.get('/removeEmployee', checkRoles('Boss'),(req, res) => {
+  console.log("in /removeEmployee");
+  res.render('./employees/listemployees',{
+    fakeRoute: "/removeEmployee",
+    user: req.user
+  })
+})
+
+//chequea que el usuario está autenticado (logeado) y que su role es el requerido
 function checkRoles(role) {
   console.log("in function ckeckRoles");
   return function(req, res, next) {
