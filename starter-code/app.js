@@ -13,8 +13,6 @@ const LocalStrategy= require("passport-local").Strategy;
 const flash = require("connect-flash");
 const bcrypt       = require("bcrypt");
 
-
-
 const app = express();
 
 // Controllers
@@ -35,7 +33,8 @@ app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('combined'));
+//app.use(logger('combined'));
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -79,6 +78,45 @@ passport.use(new LocalStrategy({
     return next(null, user);
   });
 }));
+
+/* singning up */
+// Signing Up
+passport.use('local-signup', new LocalStrategy(
+  { passReqToCallback: true },
+  (req, username, password, next) => {
+    // To avoid race conditions
+    process.nextTick(() => {
+        User.findOne({
+            'username': username
+        }, (err, user) => {
+            if (err){ return next(err); }
+
+            if (user) {
+                return next(null, false);
+            } else {
+                // Destructure the body
+                debugger;
+                const { username, name, email, familyName, password, role} = req.body;
+                const hashPass = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+                const newUser = new User({
+                  username,
+                  name,
+                  email,
+                  familyName,
+                  password: hashPass,
+                  role
+                });
+
+
+                newUser.save((err) => {
+                    if (err){ next(err); }
+                    return next(null, newUser);
+                });
+            }
+        });
+    });
+}));
+/**/
 
 // Routes
 app.use("/", siteController);

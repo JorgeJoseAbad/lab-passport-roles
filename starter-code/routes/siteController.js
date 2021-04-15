@@ -53,7 +53,7 @@ function ensureAuthenticated(req, res, next) {
 
 
 
-siteController.get('/check', checkRoles('Boss'), (req, res) => {
+siteController.get('/check', checkRoles('Developer'), (req, res) => {
   console.log("in /check");
   res.render('index', {
     fakeRoute: "/check",
@@ -69,22 +69,11 @@ siteController.get('/newEmployee', checkRoles('Boss'),(req, res) => {
   })
 })
 
-siteController.post('/newEmployee', checkRoles('Boss'),(req, res) => {
-  console.log("in /newEmployee post");
-  debugger;
-  const newUser = {
-    username: req.body.username,
-    name:  req.body.name,
-    email: req.body.email,
-    familyName: req.body.familyName,
-    password: req.body.password, //ojo, eso no puede ser asi
-    role: req.body.role
-  }
-  res.render('./employees/new',{
-    fakeRoute: "/newEmployee",
-    user: req.user
-  })
-})
+//añado passport autenticate como middleware en la route
+siteController.post('/newEmployee', checkRoles('Boss'), passport.authenticate('local-signup',  {
+  successRedirect : '/',
+  failureRedirect : '/login'
+}))
 
 siteController.get('/removeEmployee', checkRoles('Boss'),(req, res) => {
   console.log("in /removeEmployee");
