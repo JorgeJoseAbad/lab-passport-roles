@@ -1,0 +1,17 @@
+
+<h3>Change your data <%=user.username%></h3>
+<form class="" action="/edit/<%=user.id%>" method="post">
+
+  <label for="name">name</label>
+  <input type="text" name="name" value="<%=user.name%>">
+<br>
+  <label for="email">email</label>
+  <input type="email" name="email" value="<%=user.email%>">
+<br>
+  <label for="familyName">familyName</label>
+  <input type="familyName" name="familyName" value="<%=user.familyName%>">
+<br>
+
+  <input type="submit" value="Submit">
+
+</form>

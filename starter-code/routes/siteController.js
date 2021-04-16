@@ -13,8 +13,6 @@ const User = require("../models/user");
 
 siteController.get("/", (req, res, next) => {
   res.render("index",{
-    fakeRoute: "/",
-    user : "undefined"
   });
 });
 
@@ -24,19 +22,23 @@ siteController.get("/login",(req,res,next)=>{
 
 siteController.post("/login",
     passport.authenticate('local', {
-        successRedirect: '/check',
+        successRedirect: '/users',
         failureRedirect: '/login'
     }));
 
-siteController.get("/", ensureAuthenticated, (req, res, next) => {
+siteController.get("/users", ensureAuthenticated, (req, res, next) => {
     User.find({}, (err, docs) => {
-      debugger;
         if (err) return next(err);
         let renderObj = {isBoss: false, userId: req.user.id, users: docs};
         if (req.user.role === 'Boss') {
             renderObj.isBoss = true;
         }
-        res.render("index", renderObj);
+        res.render("./employees/users",{
+          renderObj,
+          user: req.user,
+          fakeRoute: "/users"
+        }
+      );
     });
 });
 
@@ -52,14 +54,14 @@ function ensureAuthenticated(req, res, next) {
 //checkRoles
 
 
-
-siteController.get('/check', checkRoles('Developer'), (req, res) => {
+//cambiar esto para redirigir según roles
+siteController.get('/check', checkDeveloper, (req, res) => {
   console.log("in /check");
-  res.render('index', {
-    fakeRoute: "/check",
-    user: req.user
-  });
+
+
+  res.redirect('/users')
 });
+
 
 siteController.get('/newEmployee', checkRoles('Boss'),(req, res) => {
   console.log("in /newEmployee");
@@ -75,6 +77,8 @@ siteController.post('/newEmployee', checkRoles('Boss'), passport.authenticate('l
   failureRedirect : '/login'
 }))
 
+
+
 siteController.get('/removeEmployee', checkRoles('Boss'),(req, res) => {
   console.log("in /removeEmployee");
   res.render('./employees/listemployees',{
@@ -83,10 +87,66 @@ siteController.get('/removeEmployee', checkRoles('Boss'),(req, res) => {
   })
 })
 
+
+/*Rutas para ver perfiles, y Edicion de los mismos perfiles*/
+siteController.get('/profile/:id', (req, res) => {
+  const userId = req.params.id;
+
+  User.findById(userId,(err, user) => {
+    if (err) return next(err)
+    let editable = false;
+    if(userId === req.user.id) {
+      editable = true;
+    }
+    res.render('./employees/showuser',{
+      user,
+      editable
+    })
+  })
+})
+
+siteController.get('/edit/:id',(req, res) => {
+
+  const userId = req.params.id;
+  User.findById(userId,(err, user) => {
+    if (err) return next(err)
+    let editable = false;
+    if(userId === req.user.id) {
+      editable = true;
+    }
+    res.render('./employees/edit',{
+      user,
+      editable
+    })
+  })
+
+})
+
+siteController.post('/edit/:id',(req, res) => {
+
+  const userId=req.params.id
+  const userModified = {
+    email: req.body.email,
+    familyName: req.body.familyName,
+    name: req.body.name,
+  }
+
+  User.findByIdAndUpdate(userId,userModified,{new:true},(err, user) => {
+    if (err) return next(err);
+    res.render('./employees/showuser',{
+      user,
+      editable:false //para no repetir directamente
+    })
+  })
+
+})
+
+
 //chequea que el usuario está autenticado (logeado) y que su role es el requerido
 function checkRoles(role) {
   console.log("in function ckeckRoles");
   return function(req, res, next) {
+    debugger;
     if (req.isAuthenticated() && req.user.role === role) {
       console.log("role autenticaded");
       return next();

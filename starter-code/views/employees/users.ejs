@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Ironhack Bureau Investigation</title>
+</head>
+
+<body>
+
+  Hello, Ironhacker, this is the inferno!
+  <p>This is fakeRoute:
+    <%=fakeRoute%>
+  </p>
+
+  And you are:
+  <p>Username:
+    <%= user.username %>
+  </p>
+  <p>Name:
+    <%= user.name %>
+  </p>
+  <p>FamilyName:
+    <%= user.familyName %>
+  </p>
+  <p>Role:
+    <%= user.role %>
+  </p>
+  <% if (renderObj.isBoss) { %>
+  <p><a href="/newEmployee">New Employee </a></p>
+  <p><a href="/removeEmployee">Fire Employee </a></p>
+  <% } else {%>
+  <p><a href="/listCourses">List Courses </a></p>
+  <%} %>
+
+   <!-- HACK:  -->
+   <h3> List of users </h3>
+  <ul>
+    <% renderObj.users.forEach((item,i)=>{ %>
+    <li>
+      <p>
+        <%=item.username%>
+      </p><a href="/profile/<%=item.id%>">See profile</a>
+    </li>
+    <%})%>
+  </ul>
+
+</body>
+
+</html>

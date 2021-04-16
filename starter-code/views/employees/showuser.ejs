@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>show users</title>
+</head>
+  <body>
+  <h1>User data</h1>
+    <p><b>username: </b><%=user.username%></p>
+    <p><b>name: </b><%=user.name%></p>
+    <p><b>email: </b><%=user.email%></p>
+    <p><b>familyName: </b><%=user.familyName%></p>
+    <p><b>role: </b><%=user.role%></p>
+    <% if (editable) {%>
+      <a href="/edit/<%=user.id%>">Edit User</a>
+    <%}%>
+  </body>
+</html>

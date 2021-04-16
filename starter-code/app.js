@@ -24,7 +24,8 @@ const Course = require("./models/course");
 // Mongoose configuration
 mongoose.connect("mongodb://localhost/ibi-ironhack",{
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 });
 
 // view engine setup
