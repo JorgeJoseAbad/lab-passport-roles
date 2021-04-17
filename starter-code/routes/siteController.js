@@ -140,6 +140,10 @@ siteController.post('/edit/:id',(req, res) => {
 
 })
 
+siteController.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+})
 
 //chequea que el usuario está autenticado (logeado) y que su role es el requerido
 function checkRoles(role) {
