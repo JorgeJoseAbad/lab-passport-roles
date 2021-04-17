@@ -59,7 +59,7 @@ siteController.get('/check', checkDeveloper, (req, res) => {
   console.log("in /check");
 
 
-  res.redirect('/users')
+  res.render('unautorized')
 });
 
 
@@ -123,7 +123,6 @@ siteController.get('/edit/:id',(req, res) => {
 })
 
 siteController.post('/edit/:id',(req, res) => {
-
   const userId=req.params.id
   const userModified = {
     email: req.body.email,

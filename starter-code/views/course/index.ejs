@@ -1,0 +1,15 @@
+Hola caracola <%=name%>
+<% course.forEach((item,i)=>{ %>
+  <p><%=item%></p>
+
+  <form class="" action="./course/edit/<%=item.id%>" method="GET">
+    <input type="submit" name="edit" value="edit">
+  </form>
+
+  <form class="" action="./course/delete/<%=item.id%>" method="POST">
+    <input type="submit" name="edit" value="delete">
+  </form>
+
+<%})%>
+
+<a href="./course/new-course">Nuevo curso</a>

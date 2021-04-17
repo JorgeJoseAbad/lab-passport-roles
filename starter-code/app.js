@@ -17,6 +17,7 @@ const app = express();
 
 // Controllers
 const siteController = require("./routes/siteController");
+const courseController = require("./routes/courseController");
 
 const User = require("./models/user");
 const Course = require("./models/course");
@@ -121,6 +122,7 @@ passport.use('local-signup', new LocalStrategy(
 
 // Routes
 app.use("/", siteController);
+app.use("/course", courseController);
 
 
 // catch 404 and forward to error handler
